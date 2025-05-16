@@ -6,6 +6,7 @@ import {
 import { Input } from "@/components/ui/input"
 import robot from '../assets/robot.png';
 import close from '../assets/close.svg';
+import send from '../assets/send.svg';
 import { useState } from 'react';
 
 const Chat = () => {
@@ -36,7 +37,16 @@ const Chat = () => {
               />
             </div>
             <div className="mb-auto h-10 p-4">Content</div>
-            <Input placeholder='Reply to Tech Support' />
+            <div className="relative rounded-b-md">
+              <Input id="search" placeholder="Reply to Tech Support" />
+              <div className="absolute right-2.5 top-2.5 h-4 w-5 text-muted-foreground cursor-pointer">
+                <img
+                  src={send}
+                  width={60}
+                  height={60}
+                />
+              </div>
+            </div>
           </div>
         </PopoverContent>
       </Popover>
