@@ -1,11 +1,15 @@
 import React from "react";
-interface SearchBarProps{
-    searchTerm: string,
-    onSearchTermChange: ((term: string)=> void)
+interface SearchBarProps {
+  searchTerm: string;
+  onSearchTermChange: (term: string) => void;
+  onSubmit: ()=>void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({searchTerm, onSearchTermChange}) => {
-
+const SearchBar: React.FC<SearchBarProps> = ({
+  searchTerm,
+  onSearchTermChange,
+  onSubmit
+}) => {
   return (
     <div>
       <input
@@ -14,6 +18,9 @@ const SearchBar: React.FC<SearchBarProps> = ({searchTerm, onSearchTermChange}) =
         value={searchTerm}
         onChange={(e) => onSearchTermChange(e.target.value)}
       />
+      <button onClick={onSubmit} className="submit-button">
+        Submit
+      </button>
     </div>
   );
 };
