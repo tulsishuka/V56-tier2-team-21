@@ -7,11 +7,11 @@ const TagSelector: React.FC<TagsProps> = ({ tags, tagClick }) => {
   const tagElements = tags.map((tag) => {
     return (
       <button key={tag} onClick={() => tagClick(tag)}
-      className="px-3 py-1 text-sm rounded-full bg-gray-200 hover:bg-gray-300">
+      className="px-3 py-1 text-sm rounded-full bg-gray-200 hover:bg-gray-300 text-xs md:text-sm">
         #{tag}
       </button>
     );
   });
-  return <div className="flex gap-4 align-baseline">{tagElements}</div>;
+  return <div className="flex gap-4 align-baseline flex-wrap">{tagElements}</div>;
 };
 export default TagSelector;
