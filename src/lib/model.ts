@@ -6,6 +6,5 @@ const model: GenerativeModel = genAI.getGenerativeModel({ model: "gemini-1.5-fla
 export const generateContent = async (prompt: string): Promise<string> => {
   const result: GenerateContentResult = await model.generateContent(prompt);
   const text = result.response.text();
-  console.log(text);
   return text;
 };
