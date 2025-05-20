@@ -21,6 +21,7 @@ const RoleTypes = {
   Bot: 'bot',
   System: 'system'
 }
+
 const Chat = () => {
   const [open, setOpen] = useState(false);
 
@@ -146,10 +147,11 @@ const Chat = () => {
                 );
               })}
 
-              {isLoading && <p className="loading-text">Generating response...</p>}
-
-
-
+              {isLoading && <div className="bouncing-loader flex items-start">
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>}
             </div>
             {/* <button onClick={surprise}>Surprise</button> */}
             {/* <button onClick={handleClear} className="clear-btn">Clear</button> */}
