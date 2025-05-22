@@ -2,7 +2,8 @@ import React, { type JSX } from 'react';
 
 // Helper to format inline markdown-like syntax
 const formatInline = (text: string): React.ReactNode[] => {
-  const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/);
+  const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`|https?:\/\/[^\s]+)/);
+
   return parts.map((part, i) => {
     if (/^\*\*(.*)\*\*$/.test(part)) {
       return <strong key={i}>{part.slice(2, -2)}</strong>;
@@ -11,7 +12,24 @@ const formatInline = (text: string): React.ReactNode[] => {
       return <em key={i}>{part.slice(1, -1)}</em>;
     }
     if (/^`(.*)`$/.test(part)) {
-      return <code key={i} className="bg-gray-100 px-1 rounded">{part.slice(1, -1)}</code>;
+      return (
+        <code key={i} className="bg-gray-100 px-1 rounded">
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+    if (/^https?:\/\/[^\s]+$/.test(part)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 underline"
+        >
+          {part}
+        </a>
+      );
     }
     return <React.Fragment key={i}>{part}</React.Fragment>;
   });
