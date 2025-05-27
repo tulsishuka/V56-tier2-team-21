@@ -45,15 +45,20 @@ const Chat = () => {
       return;
     }
 
+    // Add user's message to response first
+    setResponse(prevResponse => [
+      ...prevResponse,
+      { type: 'user', message: userInput },
+    ]);
+    setUserInput('');
     setIsLoading(true);
+
     try {
       const res = await generateContent(userInput);
       setResponse(prevResponse => [
         ...prevResponse,
-        { type: 'user', message: userInput },
         { type: 'bot', message: res },
       ]);
-      setUserInput('');
     } catch (err) {
       console.error('Error generating response:', err);
       setResponse(prevResponse => [
@@ -89,7 +94,7 @@ const Chat = () => {
             onClick={() => setOpen(!open)}
           />
         </PopoverTrigger>
-        <PopoverContent className='mr-5 w-90'>
+        <PopoverContent className='mr-5 w-90 border'>
           <div className="flex flex-col justify-between h-150">
             <div className="bg-[#b570ce] p-2 flex items-center gap-2 rounded-t-md relative">
               <img
