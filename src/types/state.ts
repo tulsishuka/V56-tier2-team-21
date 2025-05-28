@@ -10,7 +10,7 @@ export interface AppState {
 }
 
 
-export interface useResourcesReturn{
+export interface UseResourcesReturn{
     resources: Resources[];
     filteredResources: Resources[];
     isLoading: boolean;
@@ -18,7 +18,7 @@ export interface useResourcesReturn{
     searchResources: (term: string, tagIds: string[]) => void;
 }
 
-export interface useTagReturn{
+export interface UseTagsReturn{
     tags: Tag[];
     isLoading: boolean;
     error: string | null;
