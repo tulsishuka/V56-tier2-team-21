@@ -21,7 +21,7 @@ export interface SearchBarProps{
 
 export interface TagSelectorProps{
     tags: Tag[];
-    selectedTag: string[];
+    selectedTags: string[];
     onTagClick: (tagId: string) => void;
     isLoading?: boolean;
 }

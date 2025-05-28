@@ -2,14 +2,14 @@ import React from "react";
 import SearchBar from "../components/SearchBar";
 import TagSelector from "../components/TagSelector";
 
+import { useTags } from "@/hooks/useTags";
+
 export const SearchBarAndTagContainer: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [tags, setTags] = React.useState<string[]>([
-    "React",
-    "TypeScript",
-    "JavaScript",
-    "Java",
-  ]);
+  const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
+
+  const { tags, isLoading: tagsLoading, error: tagsError } = useTags();
+
   const handleSearchSubmit = () => {
     console.log("Submitted search term:", searchTerm);
   };
@@ -26,7 +26,12 @@ export const SearchBarAndTagContainer: React.FC = () => {
         onSubmit={handleSearchSubmit}
       />
       <div className="mt-6">
-        <TagSelector tags={tags} tagClick={handleTagClick} />
+        <TagSelector
+          tags={tags}
+          selectedTags={selectedTags}
+          onTagClick={handleTagClick}
+          isLoading={tagsLoading}
+        />
       </div>
     </div>
   );
