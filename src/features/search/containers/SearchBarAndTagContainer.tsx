@@ -19,9 +19,13 @@ export const SearchBarAndTagContainer: React.FC = () => {
     searchResources,
   } = useResources();
 
-  const handleSearchSubmit = () => {
-    console.log("Submitted search term:", searchTerm);
-  };
+  const handleSearchSubmit = useCallback(() => {
+    searchResources(searchTerm, selectedTags);
+  }, [searchTerm, selectedTags, searchResources]);
+
+  const handleSearchTermChange = useCallback((term: string) => {
+    setSearchTerm(term);
+  },[]);
 
   const handleTagClick = useCallback(
     (tagId: string) => {
@@ -40,8 +44,9 @@ export const SearchBarAndTagContainer: React.FC = () => {
     <div className="mx-auto max-w-2xl my-48">
       <SearchBar
         searchTerm={searchTerm}
-        onSearchTermChange={setSearchTerm}
+        onSearchTermChange={handleSearchTermChange}
         onSubmit={handleSearchSubmit}
+        isLoading={resourcesLoading}
       />
       <div className="mt-6">
         <TagSelector
