@@ -19,7 +19,7 @@ export function useResources(): UseResourcesReturn {
 
             return matchesSearch && matchesTags;
         })
-    }, [resources, searchTerm, setSelectedTagIds]);
+    }, [resources, searchTerm, selectedTagIds]);
 
 
 
