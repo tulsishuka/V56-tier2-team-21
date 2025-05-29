@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import TagSelector from "../components/TagSelector";
 
@@ -26,6 +26,15 @@ export const SearchBarAndTagContainer: React.FC = () => {
   const handleSearchTermChange = useCallback((term: string) => {
     setSearchTerm(term);
   },[]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      searchResources(searchTerm, selectedTags);
+    }, 300); // 300ms debounce delay
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, selectedTags, searchResources]);
+
 
   const handleTagClick = useCallback(
     (tagId: string) => {
