@@ -9,7 +9,7 @@ const ResourceList: React.FC<ResourcesListProps> = ({
   if (error) {
     return (
       <div className="text-center p-8">
-        <div className="text-red-500 mb-2">Errro Loading Resources</div>
+        <div className="text-red-500 mb-2">Error Loading Resources</div>
         <p className="text-gray-600">{error}</p>
       </div>
     );
@@ -20,8 +20,8 @@ const ResourceList: React.FC<ResourcesListProps> = ({
       <div className="space-y-4">
         {[...Array(5)].map((_, index) => (
           <div key={index} className="border rounded-lg p-4 animate-pulse">
-            <div className="h-4 bg-gray-400 rounded w-3/4 mb-2:"></div>
-            <div className="h-3 bg-gray-200 rounded w-1/2 mb-2:"></div>
+            <div className="h-4 bg-gray-400 rounded w-3/4 mb-2"></div>
+            <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
             <div className="h-3 bg-gray-200 rounded w-1/4"></div>
           </div>
         ))}
@@ -55,16 +55,19 @@ const ResourceList: React.FC<ResourcesListProps> = ({
         >
           <h3 className="font-medium text-lg mb-2">
             <a
-              href="resource.url"
+              href={resource.url}
               target="_blank"
               className="text-blue-600 hover:text-blue-800 hover:underline "
-            ></a>
-            {resource.name}
+            >
+              {resource.name}
+            </a>
           </h3>
           <div className="text-sm text-gray-600 mb-2">
             By: <span className="font-medium">{resource.author}</span>
           </div>
-          <div className="text-xs text-gray">Added: {new Date(resource.createdAt).toLocaleString()}</div>
+          <div className="text-xs text-gray">
+            Added: {new Date(resource.createdAt).toLocaleString()}
+          </div>
         </article>
       ))}
     </div>
