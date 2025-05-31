@@ -30,7 +30,8 @@ export interface ResourcesListProps {
     resources: Resources[];
     isLoading?: boolean;
     error?: string | null;
-
+    searchTerm: string;
+    selectedTags: string[];
 }
 
 

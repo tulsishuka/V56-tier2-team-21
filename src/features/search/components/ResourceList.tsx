@@ -5,6 +5,8 @@ const ResourceList: React.FC<ResourcesListProps> = ({
   resources,
   isLoading = false,
   error = null,
+  searchTerm,
+  selectedTags,
 }) => {
   if (error) {
     return (
@@ -47,7 +49,8 @@ const ResourceList: React.FC<ResourcesListProps> = ({
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold text-gray-800">
-        Found {resources.length} Resources{resources.length === 1 ? "" : "s"}
+        {(!!searchTerm || (selectedTags && selectedTags.length > 0)) &&
+          `Found ${resources.length} Resource${resources.length === 1 ? "" : "s"}`}
       </h2>
       <div className="mt-8 flex flex-wrap gap-4 mx-auto justify-center">
         {resources.map((resource) => (

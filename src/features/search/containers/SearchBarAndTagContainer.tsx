@@ -85,6 +85,8 @@ export const SearchBarAndTagContainer: React.FC = () => {
           resources={currentResources}
           isLoading={resourcesLoading}
           error={resourcesError}
+          searchTerm={searchTerm}
+          selectedTags={selectedTags}
         />
       </div>
 
