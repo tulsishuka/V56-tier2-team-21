@@ -62,8 +62,8 @@ export const SearchBarAndTagContainer: React.FC = () => {
   const totalPages = Math.ceil(filteredResources.length / postsPerPage);
 
   return (
-    <div className="mx-auto max-w-7xl my-48">
-      <div className="text-center mb-8 max-w-2xl flex flex-col mx-auto">
+    <div className="mx-auto w-full my-48">
+      <div className="text-center mb-8 md:max-w-2xl max-w-xl flex flex-col mx-auto">
         <SearchBar
           searchTerm={searchTerm}
           onSearchTermChange={handleSearchTermChange}

@@ -38,7 +38,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-medium text-gray-700">Filter by tags:</h3>
-      <div className="flex gap-2 flex-wrap">{tagElements}</div>
+      <div className="flex gap-2 flex-wrap justify-center">{tagElements}</div>
     </div>
   );
 };

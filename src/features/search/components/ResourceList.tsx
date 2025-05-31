@@ -56,7 +56,7 @@ const ResourceList: React.FC<ResourcesListProps> = ({
         {resources.map((resource) => (
           <article
             key={resource.id}
-            className="border rounded-lg p-4 hover:shadow-md transition-shadow h-36 w-120"
+            className="border rounded-lg p-4 hover:shadow-md transition-shadow h-36 w-90 md:w-120"
           >
             <h3 className="font-medium text-lg mb-2">
               <a
