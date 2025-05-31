@@ -43,33 +43,37 @@ const ResourceList: React.FC<ResourcesListProps> = ({
     );
   }
 
+
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold text-gray-800">
         Found {resources.length} Resources{resources.length === 1 ? "" : "s"}
       </h2>
-      {resources.map((resource) => (
-        <article
-          key={resource.id}
-          className="border rounded-lg p-4 hover:shadow-md transition-shadow"
-        >
-          <h3 className="font-medium text-lg mb-2">
-            <a
-              href={resource.url}
-              target="_blank"
-              className="text-blue-600 hover:text-blue-800 hover:underline "
-            >
-              {resource.name}
-            </a>
-          </h3>
-          <div className="text-sm text-gray-600 mb-2">
-            By: <span className="font-medium">{resource.author}</span>
-          </div>
-          <div className="text-xs text-gray">
-            Added: {new Date(resource.createdAt).toLocaleString()}
-          </div>
-        </article>
-      ))}
+      <div className="mt-8 flex flex-wrap gap-4 mx-auto justify-center">
+        {resources.map((resource) => (
+          <article
+            key={resource.id}
+            className="border rounded-lg p-4 hover:shadow-md transition-shadow h-36 w-120"
+          >
+            <h3 className="font-medium text-lg mb-2">
+              <a
+                href={resource.url}
+                target="_blank"
+                className="text-blue-600 hover:text-blue-800 hover:underline "
+              >
+                {resource.name}
+              </a>
+            </h3>
+            <div className="text-sm text-gray-600 mb-2">
+              By: <span className="font-medium">{resource.author}</span>
+            </div>
+            <div className="text-xs text-gray">
+              Added: {new Date(resource.createdAt).toLocaleString()}
+            </div>
+          </article>
+        ))}
+      </div>
+
     </div>
   );
 };

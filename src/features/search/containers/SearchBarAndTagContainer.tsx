@@ -62,30 +62,33 @@ export const SearchBarAndTagContainer: React.FC = () => {
   const totalPages = Math.ceil(filteredResources.length / postsPerPage);
 
   return (
-    <div className="mx-auto max-w-2xl my-48">
-      <SearchBar
-        searchTerm={searchTerm}
-        onSearchTermChange={handleSearchTermChange}
-        onSubmit={handleSearchSubmit}
-        isLoading={resourcesLoading}
-      />
-      <div className="mt-6">
-        <TagSelector
-          tags={tags}
-          selectedTags={selectedTags}
-          onTagClick={handleTagClick}
-          isLoading={tagsLoading}
+    <div className="mx-auto max-w-7xl my-48">
+      <div className="text-center mb-8 max-w-2xl flex flex-col mx-auto">
+        <SearchBar
+          searchTerm={searchTerm}
+          onSearchTermChange={handleSearchTermChange}
+          onSubmit={handleSearchSubmit}
+          isLoading={resourcesLoading}
         />
-        <div>
-          <ResourceList
-            resources={currentResources}
-            isLoading={resourcesLoading}
-            error={resourcesError}
+        <div className="mt-6">
+          <TagSelector
+            tags={tags}
+            selectedTags={selectedTags}
+            onTagClick={handleTagClick}
+            isLoading={tagsLoading}
           />
         </div>
+
+      </div>
+      <div className="max-w-6xl mx-auto items-center">
+        <ResourceList
+          resources={currentResources}
+          isLoading={resourcesLoading}
+          error={resourcesError}
+        />
       </div>
 
-      <Pagination 
+      <Pagination
         totalPages={totalPages}
         postsPerPage={postsPerPage}
         setCurrentPage={setCurrentPage}
