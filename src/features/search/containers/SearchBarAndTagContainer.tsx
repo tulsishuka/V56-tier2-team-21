@@ -5,6 +5,8 @@ import TagSelector from "../components/TagSelector";
 import { useTags } from "@/hooks/useTags";
 import { useResources } from "@/hooks/useResources";
 import ResourceList from "../components/ResourceList";
+import Pagination from "../components/Pagination.tsx";
+
 
 export const SearchBarAndTagContainer: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -19,13 +21,20 @@ export const SearchBarAndTagContainer: React.FC = () => {
     searchResources,
   } = useResources();
 
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [postsPerPage, setPostPerPage] = React.useState(10);
+
+  const lastPostIndex = currentPage * postsPerPage;
+  const firstPostIndex = lastPostIndex - postsPerPage;
+
+  const currentResources = filteredResources.slice(firstPostIndex, lastPostIndex);
   const handleSearchSubmit = useCallback(() => {
     searchResources(searchTerm, selectedTags);
   }, [searchTerm, selectedTags, searchResources]);
 
   const handleSearchTermChange = useCallback((term: string) => {
     setSearchTerm(term);
-  },[]);
+  }, []);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -49,6 +58,9 @@ export const SearchBarAndTagContainer: React.FC = () => {
     [searchTerm, searchResources]
   );
 
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredResources.length / postsPerPage);
+
   return (
     <div className="mx-auto max-w-2xl my-48">
       <SearchBar
@@ -64,15 +76,21 @@ export const SearchBarAndTagContainer: React.FC = () => {
           onTagClick={handleTagClick}
           isLoading={tagsLoading}
         />
-
         <div>
           <ResourceList
-            resources={filteredResources}
+            resources={currentResources}
             isLoading={resourcesLoading}
             error={resourcesError}
           />
         </div>
       </div>
+
+      <Pagination 
+        totalPages={totalPages}
+        postsPerPage={postsPerPage}
+        setCurrentPage={setCurrentPage}
+        currentPage={currentPage}
+      />
     </div>
   );
 };
