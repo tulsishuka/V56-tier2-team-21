@@ -1,34 +1,42 @@
-export interface Tag{
+export interface Tag {
     tag: string;
     id: string;
 }
 
-export interface Resources{
+export interface Resources {
     author: string;
     name: string;
     appliedTags: string[];
-    url:string;
+    url: string;
     createdAt: string;
     id: string;
 }
 
-export interface SearchBarProps{
+export interface SearchBarProps {
     searchTerm: string;
     onSearchTermChange: (term: string) => void;
     onSubmit: () => void;
     isLoading?: boolean;
 }
 
-export interface TagSelectorProps{
+export interface TagSelectorProps {
     tags: Tag[];
     selectedTags: string[];
     onTagClick: (tagId: string) => void;
     isLoading?: boolean;
 }
 
-export interface ResourcesListProps{
+export interface ResourcesListProps {
     resources: Resources[];
     isLoading?: boolean;
-    error?:string|null;
+    error?: string | null;
 
+}
+
+
+export interface PaginationProps {
+    totalPages: number;
+    postsPerPage: number;
+    setCurrentPage: (page: number) => void;
+    currentPage: number;
 }
