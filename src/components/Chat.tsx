@@ -10,6 +10,7 @@ import send from '../assets/send.svg';
 import { useState, type ChangeEvent } from 'react';
 import { generateContent } from '../lib/model';
 import { formattedResponse } from '../lib/textFormat';
+import { useRef, useEffect } from 'react';
 
 interface ChatMessage {
   type: 'user' | 'bot' | 'system';
@@ -24,20 +25,20 @@ const RoleTypes = {
 
 const Chat = () => {
   const [open, setOpen] = useState(false);
-
   const [userInput, setUserInput] = useState<string>('');
   const [response, setResponse] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const handleUserInput = (e: ChangeEvent<HTMLInputElement>) => {
     setUserInput(e.target.value);
   };
 
-  const handleClear = () => {
-    setUserInput('');
-    setResponse([]);
-    setIsLoading(false);
-  };
+  // const handleClear = () => {
+  //   setUserInput('');
+  //   setResponse([]);
+  //   setIsLoading(false);
+  // };
 
   const handleSubmit = async (userInput: string) => {
     if (!userInput.trim()) {
@@ -69,6 +70,14 @@ const Chat = () => {
       setIsLoading(false);
     }
   };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [response, isLoading]);
 
   const handleKeyPress = (e: { key: string; preventDefault: () => void; }) => {
     if (e.key === 'Enter') {
@@ -157,6 +166,8 @@ const Chat = () => {
                 <div></div>
                 <div></div>
               </div>}
+              {/* automatically scroll to the bottom if the message is too long */}
+              <div ref={messagesEndRef} />
             </div>
             {/* <button onClick={surprise}>Surprise</button> */}
             {/* <button onClick={handleClear} className="clear-btn">Clear</button> */}
