@@ -149,11 +149,11 @@ const Chat = () => {
                   >
                     {isBot ? (
                       <>
-                        <img src={robot} width={35} height={35} className="p-1" />
+                        <img src={robot} width={35} height={35} />
                         <div className="rounded-sm p-2 bg-red-50 ml-2 text-sm">{formattedResponse(msg.message)}</div>
                       </>
                     ) : (
-                      <div className="rounded-sm p-2 bg-[#f3f3f6] text-right w-fit text-sm text-nowrap">
+                      <div className="rounded-sm p-2 bg-[#f3f3f6] text-sm ml-16">
                         {msg.message}
                       </div>
                     )}
