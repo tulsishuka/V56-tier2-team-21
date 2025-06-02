@@ -4,12 +4,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import robot from '../assets/robot.png';
-import close from '../assets/close.svg';
-import send from '../assets/send.svg';
+import robot from '../../../assets/robot.png';
+import close from '../../../assets/close.svg';
+import send from '../../../assets/send.svg';
 import { useState, type ChangeEvent } from 'react';
-import { generateContent } from '../lib/model';
-import { formattedResponse } from '../lib/textFormat';
+import { generateContent } from '../../../lib/model';
+import { formattedResponse } from '../../../lib/textFormat';
 import { useRef, useEffect } from 'react';
 
 interface ChatMessage {
