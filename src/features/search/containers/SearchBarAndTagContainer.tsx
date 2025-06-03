@@ -6,7 +6,8 @@ import { useTags } from "@/hooks/useTags";
 import { useResources } from "@/hooks/useResources";
 import ResourceList from "../components/ResourceList";
 import Pagination from "../components/Pagination.tsx";
-
+import { PreviewCard } from '../../../components/PreviewCard.tsx';
+import { AnimatedGradientText } from '../../../components/magicui/animated-gradient-text.tsx';
 
 export const SearchBarAndTagContainer: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -70,26 +71,31 @@ export const SearchBarAndTagContainer: React.FC = () => {
           onSubmit={handleSearchSubmit}
           isLoading={resourcesLoading}
         />
-        <div className="mt-6">
-          <TagSelector
-            tags={tags}
-            selectedTags={selectedTags}
-            onTagClick={handleTagClick}
-            isLoading={tagsLoading}
-          />
+      </div>
+      {resourcesLoading ?
+        <div className="text-center mb-8 md:max-w-4xl max-w-xl flex flex-col mx-auto">
+          <AnimatedGradientText className='text-2xl mb-6'>Loading the latest information for you!</AnimatedGradientText>
+          <PreviewCard />
         </div>
-
-      </div>
-      <div className="max-w-6xl mx-auto items-center">
-        <ResourceList
-          resources={currentResources}
-          isLoading={resourcesLoading}
-          error={resourcesError}
-          searchTerm={searchTerm}
-          selectedTags={selectedTags}
-        />
-      </div>
-
+        : <>
+          <div className="text-center mb-8 md:max-w-2xl max-w-xl flex flex-col mx-auto mt-6">
+            <TagSelector
+              tags={tags}
+              selectedTags={selectedTags}
+              onTagClick={handleTagClick}
+            // isLoading={tagsLoading}
+            />
+          </div>
+          <div className="max-w-6xl mx-auto items-center">
+            <ResourceList
+              resources={currentResources}
+              isLoading={resourcesLoading}
+              error={resourcesError}
+              searchTerm={searchTerm}
+              selectedTags={selectedTags}
+            />
+          </div>
+        </>}
       <Pagination
         totalPages={totalPages}
         postsPerPage={postsPerPage}
