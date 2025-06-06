@@ -17,6 +17,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "firebase": "^11.9.0",
     "lucide-react": "^0.510.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
