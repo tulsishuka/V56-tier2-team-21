@@ -25,8 +25,6 @@ app.get('/getAccessToken', async (req, res) => {
     code,
   });
 
-  const BASE_URL = process.env.VITE_SERVER_BASE_URL;
-
   try {
     const response = await fetch(`https://github.com/login/oauth/access_token`, {
       method: 'POST',
@@ -68,5 +66,5 @@ app.get('/getUserData', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running at ${BASE_URL}:${PORT}`);
+  console.log(`Server running at ${process.env.VITE_SERVER_BASE_URL}:${PORT}`);
 });

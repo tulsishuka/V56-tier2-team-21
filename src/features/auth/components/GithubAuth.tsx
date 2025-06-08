@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { GithubUser } from '../../../types/api';
+import Login from '../Login';
 
 const GithubAuth = () => {
   const [rerender, setRerender] = useState(false);
@@ -47,32 +48,34 @@ const GithubAuth = () => {
     }
   };
 
-  const loginWithGithub = () => {
+  const handleGithubLogin = () => {
     window.location.assign(
       `https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}`
     );
   };
 
   return (
-    <div>
-      <header>
-        {localStorage.getItem('accessToken') ? (
-          <>
-            <h1>Welcome {userData?.login || 'User'}</h1>
-            <button
-              onClick={() => {
-                localStorage.removeItem('accessToken');
-                setRerender((prev) => !prev);
-              }}
-            >
-              Log out
-            </button>
-          </>
-        ) : (
-          <button onClick={loginWithGithub}>Login with GitHub</button>
-        )}
-      </header>
-    </div>
+    <>
+      {localStorage.getItem('accessToken') ? (
+        <div className='flex items-center gap-3 px-4 py-2'>
+          <img src={userData?.avatar_url} alt="Avatar" className='w-6 h-6 rounded-full' />
+          <h1 className='text-sm font-medium'>{userData?.login || 'User'}</h1>
+          <button
+            onClick={() => {
+              localStorage.removeItem('accessToken');
+              setRerender((prev) => !prev);
+            }}
+            className='underline text-blue-500 text-sm ml-2 cursor-pointer'
+          >
+            Log out
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Login onGithubLogin={handleGithubLogin} />
+        </div>
+      )}
+    </>
   );
 };
 

@@ -15,6 +15,3 @@ export function getCurrentDate() {
   const seconds = String(now.getSeconds());
   return `${year}-${month}-${day} ${hour}:${min}:${seconds}`;
 }
-
-const currentDate = getCurrentDate();
-console.log(currentDate);
