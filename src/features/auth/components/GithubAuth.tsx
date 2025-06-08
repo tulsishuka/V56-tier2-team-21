@@ -57,18 +57,18 @@ const GithubAuth = () => {
   return (
     <>
       {localStorage.getItem('accessToken') ? (
-        <div className='flex items-center gap-3 px-4 py-2'>
+        <div className="absolute top-10 right-6 flex items-center gap-1">
           <img src={userData?.avatar_url} alt="Avatar" className='w-6 h-6 rounded-full' />
           <h1 className='text-sm font-medium'>{userData?.login || 'User'}</h1>
-          <button
+          <div
             onClick={() => {
               localStorage.removeItem('accessToken');
               setRerender((prev) => !prev);
             }}
-            className='underline text-blue-500 text-sm ml-2 cursor-pointer'
+            className='underline text-blue-500 text-sm ml-2 cursor-pointer font-bold'
           >
             Log out
-          </button>
+          </div>
         </div>
       ) : (
         <div className="flex items-center justify-center min-h-[60vh]">

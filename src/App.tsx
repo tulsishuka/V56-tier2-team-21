@@ -7,8 +7,6 @@ import GithubAuth from './features/auth/components/GithubAuth'
 // Display the search input when login with Github or google
 const displaySearchInput = localStorage.getItem('accessToken'); // get the Github login info from localStorage
 
-console.log('displaySearchInput', displaySearchInput)
-
 function App() {
   return (
     <>
