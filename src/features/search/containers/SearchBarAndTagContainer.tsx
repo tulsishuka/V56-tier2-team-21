@@ -40,6 +40,7 @@ export const SearchBarAndTagContainer: React.FC = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       searchResources(searchTerm, selectedTags);
+      setCurrentPage(1);
     }, 300); // 300ms debounce delay
 
     return () => clearTimeout(timeoutId);
@@ -55,6 +56,7 @@ export const SearchBarAndTagContainer: React.FC = () => {
         searchResources(searchTerm, newTags);
         return newTags;
       });
+      setCurrentPage(1);
     },
     [searchTerm, searchResources]
   );
