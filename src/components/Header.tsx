@@ -1,15 +1,13 @@
-import { GoogleSignInButton } from "./GoogleSignInButton";
+import searchtech from '../assets/searchtech.png';
+import { getCurrentDate } from '../lib/utils';
 
-
-export function Header() {
+const Header = () => {
   return (
-    <header className="flex items-center justify-between p-4 border-b">
-      <div className="flex items-center gap-4">
-        <h1 className="text-xl font-bold">Resource Helper</h1>
-        {/* Navigation links */}
-      </div>
-      
-      <GoogleSignInButton />
-    </header>
-  );
+    <div className='flex items-center'>
+      <img src={searchtech} className='w-30 h-auto' />
+      <div>{getCurrentDate()}</div>
+    </div>
+  )
 }
+
+export default Header

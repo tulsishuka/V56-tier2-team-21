@@ -104,7 +104,7 @@ const Chat = () => {
           />
         </PopoverTrigger>
         <PopoverContent className='mr-5 w-90 border'>
-          <div className="flex flex-col justify-between h-150">
+          <div className="flex flex-col justify-between h-[70vh]">
             <div className="bg-[#b570ce] p-2 flex items-center gap-2 rounded-t-md relative">
               <img
                 src={robot}
