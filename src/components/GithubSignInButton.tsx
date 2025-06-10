@@ -1,22 +1,22 @@
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
-import { FcGoogle } from 'react-icons/fc';
+import githubLogo from '../assets/github-logo.svg';
 
-export function GoogleSignInButton({ className }: { className?: string }) {
-    const { user, signInWithGoogle, signOut } = useAuth();
+export function GithubSignInButton({ className }: { className?: string }) {
+    const { signInWithGithub, signOut, githubUser } = useAuth();
 
     return (
         <div className={cn("flex items-center gap-2", className)}>
-            {user ? (
+            {githubUser ? (
                 <div className="flex items-center gap-2">
-                    {user.photoURL && (
+                    {githubUser.photoURL && (
                         <img
-                            src={user.photoURL}
-                            alt={user.displayName || "User"}
+                            src={githubUser.photoURL}
+                            alt={githubUser.displayName || "User"}
                             className="h-8 w-8 rounded-full object-cover"
                         />
                     )}
-                    <span className="text-sm font-medium">{user.displayName}</span>
+                    <span className="text-sm font-medium">{githubUser.displayName}</span>
                     <button
                         onClick={signOut}
                         className="rounded-md bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
@@ -26,11 +26,11 @@ export function GoogleSignInButton({ className }: { className?: string }) {
                 </div>
             ) : (
                 <button
-                    onClick={signInWithGoogle}
+                    onClick={signInWithGithub}
                     className="flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md transition hover:bg-gray-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                    <FcGoogle className="h-5 w-5" />
-                    Sign in with Google
+                    <img src={githubLogo} className='h-5 w-5' />
+                    Sign in with Github
                 </button>
             )}
         </div>
