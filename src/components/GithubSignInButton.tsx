@@ -17,13 +17,13 @@ export function GithubSignInButton() {
                 <span className="text-sm font-medium">{githubUser.displayName}</span>
                 <button
                     onClick={signOut}
-                    className="rounded-md bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
+                    className="rounded-md  cursor-pointer bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
                 >
                     Sign Out
                 </button>
             </div>
         ) : (
-            <div className="flex items-center justify-center h-[30vh]">
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3">
                 <div
                     onClick={signInWithGithub}
                     className="flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md transition hover:bg-gray-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer w-fit"

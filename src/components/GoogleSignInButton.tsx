@@ -23,7 +23,7 @@ export function GoogleSignInButton() {
                 </button>
             </div>
         ) : (
-            <div className="flex items-center justify-center mb-5">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div
                     onClick={signInWithGoogle}
                     className="flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-md transition hover:bg-gray-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
