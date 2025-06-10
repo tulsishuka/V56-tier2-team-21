@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { type User, signInWithPopup, signOut as firebaseSignOut, AuthError } from 'firebase/auth';
+import { type User, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
 import { auth, githubProvider, googleProvider } from "@/lib/firebase";
 
 interface AuthContextType {
@@ -35,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setError(null);
             await signInWithPopup(auth, googleProvider);
         } catch (err) {
-            const authError = err as AuthError;
+            const authError = err as FirebaseError;
             setError(authError.message);
             console.error("Error signing in with Google:", authError);
         }
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setError(null);
             await signInWithPopup(auth, githubProvider);
         } catch (err) {
-            const authError = err as AuthError;
+            const authError = err as FirebaseError;
             setError(authError.message);
             console.error("Error signing in with GitHub:", authError);
         }
@@ -57,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setError(null);
             await firebaseSignOut(auth);
         } catch (err) {
-            const authError = err as AuthError;
+            const authError = err as FirebaseError;
             setError(authError.message);
             console.error("Error signing out:", authError);
         }
