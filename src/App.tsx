@@ -14,11 +14,8 @@ function App() {
   return (
     <>
       <Header />
-      {/* <div className='flex flex-col justify-center items-center gap-5 h-[50vh]'> */}
       <GoogleSignInButton />
       {!user && <GithubSignInButton />}
-      {/* </div> */}
-
       {(user || githubUser) && <SearchBarAndTagContainer />}
       <Footer />
       <Chat />
