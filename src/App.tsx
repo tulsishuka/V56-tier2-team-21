@@ -9,14 +9,14 @@ import { useAuth } from './context/AuthContext'
 // Display the search input when login with Github or google
 
 function App() {
-  const { user, githubUser } = useAuth();
+  const { user } = useAuth();
 
   return (
     <>
       <Header />
       <GoogleSignInButton />
       {!user && <GithubSignInButton />}
-      {(user || githubUser) && <SearchBarAndTagContainer />}
+      {(user && <SearchBarAndTagContainer />}
       <Footer />
       <Chat />
     </>

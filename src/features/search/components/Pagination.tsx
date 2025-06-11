@@ -3,7 +3,6 @@ import type { PaginationProps } from "@/types/api";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 const Pagination: React.FC<PaginationProps> = ({
   totalPages,
-  postsPerPage,
   setCurrentPage,
   currentPage,
 }) => {
@@ -55,11 +54,10 @@ const Pagination: React.FC<PaginationProps> = ({
             <button
               key={page}
               onClick={() => handlePageClick(page)}
-              className={`px-3 py-1 rounded ${
-                currentPage === page
+              className={`px-3 py-1 rounded ${currentPage === page
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 hover:bg-gray-300"
-              }`}
+                }`}
               aria-current={currentPage === page ? "page" : undefined}
             >
               {page}
