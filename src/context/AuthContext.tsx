@@ -1,14 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { type User, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
 import { auth, githubProvider, googleProvider } from "@/lib/firebase";
 
 interface AuthContextType {
     user: User | null;
-    githubUser: User | null;
     loading: boolean;
+    error: string | null;
     signInWithGoogle: () => Promise<void>;
-    signOut: () => Promise<void>;
     signInWithGithub: () => Promise<void>;
+    signOut: () => Promise<void>;
+    clearError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,51 +18,62 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-    const [githubUser, setgithubUser] = useState<User | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            setUser(user);
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            setUser(currentUser);
             setLoading(false);
-        })
+        });
+
         return unsubscribe;
     }, []);
 
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            setgithubUser(user);
-            setLoading(false);
-        })
-        return unsubscribe;
-    }, []);
+    const clearError = () => setError(null);
 
     const signInWithGoogle = async () => {
         try {
+            setError(null);
             await signInWithPopup(auth, googleProvider);
-        } catch (error) {
-            console.error("Error signing in with Google:", error);
+        } catch (err) {
+            const authError = err as FirebaseError;
+            setError(authError.message);
+            console.error("Error signing in with Google:", authError);
         }
     };
-    const signOut = async () => {
-        try {
-            await firebaseSignOut(auth);
-        } catch (error) {
-            console.error("Error signing out:", error);
-        }
-    }
 
     const signInWithGithub = async () => {
         try {
-            const result = await signInWithPopup(auth, githubProvider);
-            setgithubUser(result.user);
-        } catch (error) {
-            console.error("Error signing in with Github:", error);
+            setError(null);
+            await signInWithPopup(auth, githubProvider);
+        } catch (err) {
+            const authError = err as FirebaseError;
+            setError(authError.message);
+            console.error("Error signing in with GitHub:", authError);
         }
     };
 
+    const signOut = async () => {
+        try {
+            setError(null);
+            await firebaseSignOut(auth);
+        } catch (err) {
+            const authError = err as FirebaseError;
+            setError(authError.message);
+            console.error("Error signing out:", authError);
+        }
+    };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut, githubUser, signInWithGithub }}>
+        <AuthContext.Provider value={{
+            user,
+            loading,
+            error,
+            signInWithGoogle,
+            signInWithGithub,
+            signOut,
+            clearError
+        }}>
             {children}
         </AuthContext.Provider>
     );
