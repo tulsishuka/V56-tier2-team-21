@@ -16,7 +16,7 @@ function App() {
       <Header />
       <GoogleSignInButton />
       {!user && <GithubSignInButton />}
-      {(user && <SearchBarAndTagContainer />}
+      {user && <SearchBarAndTagContainer />}
       <Footer />
       <Chat />
     </>
