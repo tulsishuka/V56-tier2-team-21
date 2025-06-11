@@ -13,7 +13,7 @@ export const SearchBarAndTagContainer: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
 
-  const { tags, isLoading: tagsLoading, error: tagsError } = useTags();
+  const { tags } = useTags();
 
   const {
     filteredResources,
@@ -23,7 +23,7 @@ export const SearchBarAndTagContainer: React.FC = () => {
   } = useResources();
 
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [postsPerPage, setPostPerPage] = React.useState(10);
+  const [postsPerPage, _] = React.useState(10);
 
   const lastPostIndex = currentPage * postsPerPage;
   const firstPostIndex = lastPostIndex - postsPerPage;

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { GithubUser } from '../../../types/api';
-import Login from '../Login';
 
 const GithubAuth = () => {
   const [rerender, setRerender] = useState(false);

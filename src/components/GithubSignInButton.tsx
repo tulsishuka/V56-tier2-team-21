@@ -2,19 +2,19 @@ import { useAuth } from "@/context/AuthContext";
 import githubLogo from '../assets/github-logo.svg';
 
 export function GithubSignInButton() {
-    const { signInWithGithub, signOut, githubUser } = useAuth();
+    const { signInWithGithub, signOut, user } = useAuth();
 
     return (
-        githubUser ? (
+        user ? (
             <div className="fixed top-4 right-4 flex items-center justify-center gap-2 w-fit">
-                {githubUser.photoURL && (
+                {user.photoURL && (
                     <img
-                        src={githubUser.photoURL}
-                        alt={githubUser.displayName || "User"}
+                        src={user.photoURL}
+                        alt={user.displayName || "User"}
                         className="h-8 w-8 rounded-full object-cover"
                     />
                 )}
-                <span className="text-sm font-medium">{githubUser.displayName}</span>
+                <span className="text-sm font-medium">{user.displayName}</span>
                 <button
                     onClick={signOut}
                     className="rounded-md  cursor-pointer bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"

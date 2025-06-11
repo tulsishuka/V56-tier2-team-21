@@ -5,7 +5,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
   searchTerm,
   onSearchTermChange,
   onSubmit,
-  isLoading = false,
 }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
