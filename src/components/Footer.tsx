@@ -4,10 +4,9 @@ const Footer = () => {
       <div className='flex items-center gap-1'>
         <span>Created by</span>
         <a href='https://github.com/elva329' target="_blank" rel="noopener noreferrer">@elva329</a>
-        <a href='https://github.com/rajin-siam' target="_blank" rel="noopener noreferrer">@rajin-siam</a>
       </div>
       <div>
-        <a href='https://github.com/chingu-voyages/V55-tier2-team-21' target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href='https://github.com/chingu-voyages/V56-tier2-team-21' target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
       <div>2025</div>
     </div>
