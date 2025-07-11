@@ -20,7 +20,14 @@ const Container = () => {
         <img src='/admin.png' className='w-4/5 h-auto object-cover opacity-50' alt="Admin" />
         <span className='text-xl font-bold'>Admin</span>
       </div>
-      <div className='flex flex-col items-center justify-between w-52 h-52 border pb-2 rounded-2xl cursor-pointer'>
+      <div
+        className='flex flex-col items-center justify-between w-52 h-52 border pb-2 rounded-2xl cursor-pointer hover:shadow-lg transition'
+        onClick={() => navigate('/surgery-team')}
+        tabIndex={0}
+        role="button"
+        aria-label="Surgery Team Login"
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate('/surgery-team'); }}
+      >
         <img src='/surgery-team.png' className='w-10/12 h-auto object-cover' alt="Surgery Team" />
         <span className='text-xl font-bold'>Surgery Team</span>
       </div>

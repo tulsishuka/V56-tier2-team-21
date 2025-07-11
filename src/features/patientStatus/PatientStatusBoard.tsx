@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-// Mock patient data
-const mockPatients = [
-  { id: 'A1B2C3', number: 1, name: 'John Doe', status: 'Waiting' },
-  { id: 'D4E5F6', number: 2, name: 'Jane Smith', status: 'In Surgery' },
-  { id: 'G7H8I9', number: 3, name: 'Alice Brown', status: 'Recovery' },
-  { id: 'J1K2L3', number: 4, name: 'Bob Lee', status: 'Dismissed' },
-];
+// Local storage key
+const STORAGE_KEY = 'patientStatusBoardData';
+
+export type PatientStatus = 'Waiting' | 'In Surgery' | 'Recovery' | 'Dismissed';
+export interface Patient {
+  id: string;
+  number: number;
+  name: string;
+  status: PatientStatus;
+}
 
 // Status color mapping
 const statusColors: Record<string, string> = {
@@ -16,13 +19,58 @@ const statusColors: Record<string, string> = {
   'Dismissed': 'bg-gray-200 text-gray-500',
 };
 
+
+const AUTO_REFRESH_INTERVAL = 10000; // 10 seconds
+const VISIBLE_ROWS = 5; // Number of rows visible at a time before cycling
+
+const getPatientsFromStorage = (): Patient[] => {
+  const data = localStorage.getItem(STORAGE_KEY);
+  if (data) {
+    try {
+      return JSON.parse(data);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+
 const PatientStatusBoard: React.FC = () => {
-  const [patients, setPatients] = useState(mockPatients);
+  const [patients, setPatients] = useState<Patient[]>(getPatientsFromStorage());
+  const [lastUpdated, setLastUpdated] = useState<string>('');
+  const [startIdx, setStartIdx] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    setPatients(getPatientsFromStorage());
+  }, []);
+
+  // Auto-refresh logic
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setPatients(getPatientsFromStorage());
+      setLastUpdated(new Date().toLocaleTimeString());
+      // Cycle rows if more than visible
+      if (patients.length > VISIBLE_ROWS) {
+        setStartIdx(prev => (prev + VISIBLE_ROWS) % patients.length);
+      }
+    }, AUTO_REFRESH_INTERVAL);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [patients.length]);
 
   const handleRefresh = () => {
-    // For now, just re-set the same data (placeholder for real refresh logic)
-    setPatients([...mockPatients]);
+    setPatients(getPatientsFromStorage());
+    setLastUpdated(new Date().toLocaleTimeString());
+    setStartIdx(0);
   };
+
+  // Show only a slice if too many patients
+  const visiblePatients = patients.length > VISIBLE_ROWS
+    ? patients.slice(startIdx, startIdx + VISIBLE_ROWS)
+    : patients;
 
   return (
     <div className="max-w-2xl mx-auto mt-8 p-4 bg-white rounded-xl shadow-md">
@@ -35,7 +83,10 @@ const PatientStatusBoard: React.FC = () => {
           Refresh
         </button>
       </div>
-      <div className="overflow-x-auto">
+      {lastUpdated && (
+        <div className="mb-2 text-sm text-gray-500">Latest updated at {lastUpdated}</div>
+      )}
+      <div className="overflow-x-auto max-h-80">
         <table className="min-w-full border">
           <thead>
             <tr className="bg-gray-100">
@@ -45,7 +96,7 @@ const PatientStatusBoard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {patients.map((patient) => (
+            {visiblePatients.map((patient) => (
               <tr key={patient.id} className="border-b">
                 <td className="px-4 py-2 font-mono">{patient.number}</td>
                 <td className="px-4 py-2">{patient.name}</td>
@@ -58,6 +109,9 @@ const PatientStatusBoard: React.FC = () => {
             ))}
           </tbody>
         </table>
+        {patients.length > VISIBLE_ROWS && (
+          <div className="text-xs text-gray-400 mt-2">Showing {startIdx + 1} - {Math.min(startIdx + VISIBLE_ROWS, patients.length)} of {patients.length} patients</div>
+        )}
       </div>
     </div>
   );
