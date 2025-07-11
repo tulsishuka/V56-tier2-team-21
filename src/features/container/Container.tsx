@@ -18,7 +18,12 @@ const Container = () => {
         <img src='/admin.png' className='w-4/5 h-auto object-cover opacity-50' />
         <span className='text-xl font-bold'>Admin</span>
       </div>
-      <div className='flex flex-col items-center justify-between w-52 h-52 border pb-2 rounded-2xl cursor-pointer hover:shadow-lg transition'>
+      <div
+        className='flex flex-col items-center justify-between 
+            w-52 h-52 border pb-2 rounded-2xl 
+            cursor-pointer hover:shadow-lg transition'
+        onClick={() => navigate('/login')}
+      >
         <img src='/surgery-team.png' className='w-10/12 h-auto object-cover' />
         <span className='text-xl font-bold'>Surgery Team</span>
       </div>
