@@ -11,7 +11,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Container />} />
-        <Route path="/status" element={<PatientStatusBoard />} />
+        <Route path="/status" element={<PatientStatusBoard isGuest={true} />} />
         <Route path="/surgery-team" element={<PatientStatusPage />} />
       </Routes>
       <Footer />

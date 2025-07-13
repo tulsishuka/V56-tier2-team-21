@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 // Local storage key
 const STORAGE_KEY = 'patientStatusBoardData';
 
-export type PatientStatus = 'Waiting' | 'In Surgery' | 'Recovery' | 'Dismissed';
+export type PatientStatus = "Checked In "|"Pre-Procedure "|"In-progress" |"Closing "|"Recovery "|"Complete "|"Dismissal";
 export interface Patient {
   id: string;
   number: number;
@@ -11,13 +11,26 @@ export interface Patient {
   status: PatientStatus;
 }
 
-// Status color mapping
+// Status color mapping (fixed keys, added Dismissal)
 const statusColors: Record<string, string> = {
-  'Waiting': 'bg-yellow-100 text-yellow-800',
-  'In Surgery': 'bg-blue-100 text-blue-800',
-  'Recovery': 'bg-green-100 text-green-800',
-  'Dismissed': 'bg-gray-200 text-gray-500',
+  'Checked In': 'bg-yellow-100 text-yellow-800',
+  'Pre-Procedure': 'bg-blue-100 text-blue-800',
+  'In-progress': 'bg-green-100 text-green-800',
+  'Closing': 'bg-gray-200 text-gray-500',
+  'Recovery': 'bg-purple-100 text-purple-800',
+  'Complete': 'bg-green-200 text-green-800',
+  'Dismissal': 'bg-red-100 text-red-800',
 };
+
+const statusOptions = [
+  'Checked In',
+  'Pre-Procedure',
+  'In-progress',
+  'Closing',
+  'Recovery',
+  'Complete',
+  'Dismissal',
+];
 
 
 const AUTO_REFRESH_INTERVAL = 10000; // 10 seconds
@@ -36,13 +49,14 @@ const getPatientsFromStorage = (): Patient[] => {
 };
 
 interface PatientStatusBoardProps {
-  onEditPatient?: (patient: Patient) => void;
+  isGuest?: boolean;
 }
 
-const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ onEditPatient }) => {
+const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest }) => {
   const [patients, setPatients] = useState<Patient[]>(getPatientsFromStorage());
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [startIdx, setStartIdx] = useState(0);
+  const [dropdownPatientId, setDropdownPatientId] = useState<string | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load from localStorage on mount
@@ -108,13 +122,37 @@ const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ onEditPatient }
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[patient.status] || 'bg-gray-100'}`}>
                     {patient.status}
                   </span>
-                  {onEditPatient && (
-                    <button
-                      className="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition"
-                      onClick={() => onEditPatient(patient)}
-                    >
-                      Update
-                    </button>
+                  {!isGuest && (
+                    <>
+                      <button
+                        className="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition"
+                        onClick={() => setDropdownPatientId(patient.id)}
+                      >
+                        Update
+                      </button>
+                      {dropdownPatientId === patient.id && (
+                        <select
+                          className="ml-2 px-2 py-1 rounded border text-xs"
+                          value={patient.status}
+                          onChange={e => {
+                            const newStatus = e.target.value;
+                            const allPatients = getPatientsFromStorage();
+                            const idx = allPatients.findIndex(p => p.id === patient.id);
+                            if (idx > -1) {
+                              allPatients[idx].status = newStatus as PatientStatus;
+                              localStorage.setItem(STORAGE_KEY, JSON.stringify(allPatients));
+                              setPatients(getPatientsFromStorage());
+                              setLastUpdated(new Date().toLocaleTimeString());
+                              setDropdownPatientId(null);
+                            }
+                          }}
+                        >
+                          {statusOptions.map(opt => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </select>
+                      )}
+                    </>
                   )}
                 </td>
               </tr>

@@ -8,7 +8,7 @@ interface PatientStatusModalProps {
   existingPatient: Patient;
 }
 
-const statusOptions: PatientStatus[] = ['Waiting', 'In Surgery', 'Recovery', 'Dismissed'];
+const statusOptions: PatientStatus[] =["Checked In ","Pre-Procedure ","In-progress" ,"Closing ","Recovery ","Complete ","Dismissal"];
 
 const PatientStatusModal: React.FC<PatientStatusModalProps> = ({ open, onClose, onSubmit, existingPatient }) => {
   const [status, setStatus] = useState<PatientStatus>(existingPatient.status);

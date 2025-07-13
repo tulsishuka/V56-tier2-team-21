@@ -82,10 +82,10 @@ const PatientStatusPage: React.FC = () => {
           </div>
           <PatientStatusForm
             onSubmit={handlePatientSubmit}
-            existingPatient={undefined}
+            existingPatient={numberInput !== null ? getPatients().find(p => p.number === numberInput) : undefined}
             onNumberChange={handleNumberChange}
           />
-          <PatientStatusBoard onEditPatient={handleEditPatient} />
+          <PatientStatusBoard isGuest={!loggedIn} />
           {editingPatient && (
             <PatientStatusModal
               open={modalOpen}
