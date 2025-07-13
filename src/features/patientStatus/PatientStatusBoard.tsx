@@ -35,7 +35,11 @@ const getPatientsFromStorage = (): Patient[] => {
   return [];
 };
 
-const PatientStatusBoard: React.FC = () => {
+interface PatientStatusBoardProps {
+  onEditPatient?: (patient: Patient) => void;
+}
+
+const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ onEditPatient }) => {
   const [patients, setPatients] = useState<Patient[]>(getPatientsFromStorage());
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [startIdx, setStartIdx] = useState(0);
@@ -100,10 +104,18 @@ const PatientStatusBoard: React.FC = () => {
               <tr key={patient.id} className="border-b">
                 <td className="px-4 py-2 font-mono">{patient.number}</td>
                 <td className="px-4 py-2">{patient.name}</td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 flex items-center gap-2">
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[patient.status] || 'bg-gray-100'}`}>
                     {patient.status}
                   </span>
+                  {onEditPatient && (
+                    <button
+                      className="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition"
+                      onClick={() => onEditPatient(patient)}
+                    >
+                      Update
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

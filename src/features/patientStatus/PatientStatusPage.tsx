@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import PatientStatusForm from './PatientStatusForm';
+import PatientStatusModal from './PatientStatusModal';
 import type { Patient } from './PatientStatusForm';
 import PatientStatusBoard from './PatientStatusBoard';
 
@@ -11,6 +12,7 @@ const PatientStatusPage: React.FC = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
   const [numberInput, setNumberInput] = useState<number | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
 
   // Get patients from localStorage
@@ -40,6 +42,7 @@ const PatientStatusPage: React.FC = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
     setEditingPatient(null);
     setNumberInput(null);
+    setModalOpen(false);
   };
 
   // When number input changes, check if patient exists and prefill
@@ -52,6 +55,12 @@ const PatientStatusPage: React.FC = () => {
     } else {
       setEditingPatient(null);
     }
+  };
+
+  // Open modal for editing
+  const handleEditPatient = (patient: Patient) => {
+    setEditingPatient(patient);
+    setModalOpen(true);
   };
 
   // Optionally, allow editing from board (not required for MVP)
@@ -73,10 +82,18 @@ const PatientStatusPage: React.FC = () => {
           </div>
           <PatientStatusForm
             onSubmit={handlePatientSubmit}
-            existingPatient={editingPatient || undefined}
+            existingPatient={undefined}
             onNumberChange={handleNumberChange}
           />
-          <PatientStatusBoard />
+          <PatientStatusBoard onEditPatient={handleEditPatient} />
+          {editingPatient && (
+            <PatientStatusModal
+              open={modalOpen}
+              onClose={() => { setModalOpen(false); setEditingPatient(null); }}
+              onSubmit={handlePatientSubmit}
+              existingPatient={editingPatient}
+            />
+          )}
         </>
       )}
     </div>
