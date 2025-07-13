@@ -1,9 +1,10 @@
+// ...existing code...
 import React, { useState, useEffect, useRef } from 'react';
 
 // Local storage key
 const STORAGE_KEY = 'patientStatusBoardData';
 
-export type PatientStatus = "Checked In "|"Pre-Procedure "|"In-progress" |"Closing "|"Recovery "|"Complete "|"Dismissal";
+export type PatientStatus = "Checked In"|"Pre-Procedure"|"In-progress"|"Closing"|"Recovery"|"Complete"|"Dismissal";
 export interface Patient {
   id: string;
   number: number;
@@ -11,8 +12,8 @@ export interface Patient {
   status: PatientStatus;
 }
 
-// Status color mapping (fixed keys, added Dismissal)
-const statusColors: Record<string, string> = {
+// Status color mapping
+const statusColors: Record<PatientStatus, string> = {
   'Checked In': 'bg-yellow-100 text-yellow-800',
   'Pre-Procedure': 'bg-blue-100 text-blue-800',
   'In-progress': 'bg-green-100 text-green-800',
@@ -21,16 +22,6 @@ const statusColors: Record<string, string> = {
   'Complete': 'bg-green-200 text-green-800',
   'Dismissal': 'bg-red-100 text-red-800',
 };
-
-const statusOptions = [
-  'Checked In',
-  'Pre-Procedure',
-  'In-progress',
-  'Closing',
-  'Recovery',
-  'Complete',
-  'Dismissal',
-];
 
 
 const AUTO_REFRESH_INTERVAL = 10000; // 10 seconds
@@ -50,39 +41,96 @@ const getPatientsFromStorage = (): Patient[] => {
 
 interface PatientStatusBoardProps {
   isGuest?: boolean;
+  patients?: Patient[];
 }
 
-const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest }) => {
-  const [patients, setPatients] = useState<Patient[]>(getPatientsFromStorage());
+const statusOptions: PatientStatus[] = [
+  'Checked In',
+  'Pre-Procedure',
+  'In-progress',
+  'Closing',
+  'Recovery',
+  'Complete',
+  'Dismissal',
+];
+
+function UpdateStatusDropdown({ patient, refreshBoard }: { patient: Patient; refreshBoard: () => void }) {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selected, setSelected] = useState<PatientStatus>(patient.status);
+  const handleUpdate = () => setShowDropdown(true);
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value as PatientStatus;
+    setSelected(newStatus);
+    // Update localStorage
+    const patients = getPatientsFromStorage();
+    const idx = patients.findIndex(p => p.id === patient.id);
+    if (idx > -1) {
+      patients[idx].status = newStatus;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
+      refreshBoard();
+      setShowDropdown(false);
+    }
+  };
+  return showDropdown ? (
+    <select
+      className="ml-2 px-2 py-1 rounded border text-xs"
+      value={selected}
+      onChange={handleChange}
+    >
+      {statusOptions.map(opt => (
+        <option key={opt} value={opt}>{opt}</option>
+      ))}
+    </select>
+  ) : (
+    <button
+      className="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition"
+      onClick={handleUpdate}
+    >
+      Update
+    </button>
+  );
+}
+
+const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest, patients: propPatients }) => {
+  // If propPatients is provided (search result), use it and do not overwrite on refresh
+  const [patients, setPatients] = useState<Patient[]>(propPatients ?? getPatientsFromStorage());
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [startIdx, setStartIdx] = useState(0);
-  const [dropdownPatientId, setDropdownPatientId] = useState<string | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount (only if not using propPatients)
   useEffect(() => {
-    setPatients(getPatientsFromStorage());
-  }, []);
+    if (!propPatients) {
+      setPatients(getPatientsFromStorage());
+    } else {
+      setPatients(propPatients);
+    }
+  }, [propPatients]);
 
-  // Auto-refresh logic
+  // Auto-refresh logic: only refresh from storage if not showing search results
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
+    if (!propPatients) {
+      intervalRef.current = setInterval(() => {
+        setPatients(getPatientsFromStorage());
+        setLastUpdated(new Date().toLocaleTimeString());
+        // Cycle rows if more than visible
+        if (patients.length > VISIBLE_ROWS) {
+          setStartIdx(prev => (prev + VISIBLE_ROWS) % patients.length);
+        }
+      }, AUTO_REFRESH_INTERVAL);
+      return () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      };
+    }
+  }, [patients.length, propPatients]);
+
+  // Only refresh from storage if not showing search results
+  const handleRefresh = () => {
+    if (!propPatients) {
       setPatients(getPatientsFromStorage());
       setLastUpdated(new Date().toLocaleTimeString());
-      // Cycle rows if more than visible
-      if (patients.length > VISIBLE_ROWS) {
-        setStartIdx(prev => (prev + VISIBLE_ROWS) % patients.length);
-      }
-    }, AUTO_REFRESH_INTERVAL);
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [patients.length]);
-
-  const handleRefresh = () => {
-    setPatients(getPatientsFromStorage());
-    setLastUpdated(new Date().toLocaleTimeString());
-    setStartIdx(0);
+      setStartIdx(0);
+    }
   };
 
   // Show only a slice if too many patients
@@ -91,7 +139,7 @@ const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest }) => {
     : patients;
 
   return (
-    <div className="max-w-2xl mx-auto mt-8 p-4 bg-white rounded-xl shadow-md">
+    <div className="max-w-2xl mx-auto mt-8 p-4 bg-white rounded-xl shadow-md mb-24">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Patient Status Board</h2>
         <button
@@ -122,37 +170,9 @@ const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest }) => {
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[patient.status] || 'bg-gray-100'}`}>
                     {patient.status}
                   </span>
+                  {/* Only show update for non-guests */}
                   {!isGuest && (
-                    <>
-                      <button
-                        className="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition"
-                        onClick={() => setDropdownPatientId(patient.id)}
-                      >
-                        Update
-                      </button>
-                      {dropdownPatientId === patient.id && (
-                        <select
-                          className="ml-2 px-2 py-1 rounded border text-xs"
-                          value={patient.status}
-                          onChange={e => {
-                            const newStatus = e.target.value;
-                            const allPatients = getPatientsFromStorage();
-                            const idx = allPatients.findIndex(p => p.id === patient.id);
-                            if (idx > -1) {
-                              allPatients[idx].status = newStatus as PatientStatus;
-                              localStorage.setItem(STORAGE_KEY, JSON.stringify(allPatients));
-                              setPatients(getPatientsFromStorage());
-                              setLastUpdated(new Date().toLocaleTimeString());
-                              setDropdownPatientId(null);
-                            }
-                          }}
-                        >
-                          {statusOptions.map(opt => (
-                            <option key={opt} value={opt}>{opt}</option>
-                          ))}
-                        </select>
-                      )}
-                    </>
+                    <UpdateStatusDropdown patient={patient} refreshBoard={handleRefresh} />
                   )}
                 </td>
               </tr>
