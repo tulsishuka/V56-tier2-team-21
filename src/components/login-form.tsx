@@ -3,6 +3,7 @@ import { Card, CardContent } from './ui/card'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { cn } from '../lib/utils'
+import Header from './Header'
 
 export function LoginForm({
   className,
@@ -10,9 +11,10 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <Header />
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-4 md:p-8">
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
