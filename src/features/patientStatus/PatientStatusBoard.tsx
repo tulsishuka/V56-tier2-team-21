@@ -97,6 +97,7 @@ const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest, patien
   const [lastUpdated, setLastUpdated] = useState<string>('');
   const [startIdx, setStartIdx] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   // Load from localStorage on mount (only if not using propPatients)
   useEffect(() => {
@@ -124,6 +125,27 @@ const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest, patien
     }
   }, [patients.length, propPatients]);
 
+  // Auto-scroll for guest view
+  useEffect(() => {
+    if (!isGuest) return;
+    const container = scrollRef.current;
+    if (!container) return;
+    let scrollAmount = 1;
+    let interval: NodeJS.Timeout;
+    function startScroll() {
+      interval = setInterval(() => {
+        if (!container) return;
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+          container.scrollTop = 0;
+        } else {
+          container.scrollTop += scrollAmount;
+        }
+      }, 40); // Adjust speed as needed
+    }
+    startScroll();
+    return () => clearInterval(interval);
+  }, [isGuest, patients.length]);
+
   // Only refresh from storage if not showing search results
   const handleRefresh = () => {
     if (!propPatients) {
@@ -139,49 +161,57 @@ const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest, patien
     : patients;
 
   return (
-    <div className="max-w-2xl mx-auto mt-8 p-4 bg-white rounded-xl shadow-md mb-24">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Patient Status Board</h2>
-        <button
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          onClick={handleRefresh}
-        >
-          Refresh
-        </button>
-      </div>
-      {lastUpdated && (
-        <div className="mb-2 text-sm text-gray-500">Latest updated at {lastUpdated}</div>
-      )}
-      <div className="overflow-x-auto max-h-80">
-        <table className="min-w-full border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="px-4 py-2 text-left">Patient #</th>
-              <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 text-left">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visiblePatients.map((patient) => (
-              <tr key={patient.id} className="border-b">
-                <td className="px-4 py-2 font-mono">{patient.number}</td>
-                <td className="px-4 py-2">{patient.name}</td>
-                <td className="px-4 py-2 flex items-center gap-2">
-                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[patient.status] || 'bg-gray-100'}`}>
-                    {patient.status}
-                  </span>
-                  {/* Only show update for non-guests */}
-                  {!isGuest && (
-                    <UpdateStatusDropdown patient={patient} refreshBoard={handleRefresh} />
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {patients.length > VISIBLE_ROWS && (
-          <div className="text-xs text-gray-400 mt-2">Showing {startIdx + 1} - {Math.min(startIdx + VISIBLE_ROWS, patients.length)} of {patients.length} patients</div>
+    <div className={`${isGuest ? 'fixed inset-0 bg-white' : 'max-w-2xl mx-auto mt-8 p-4 bg-white rounded-xl shadow-md mb-24'}`}>
+      <div className={`${isGuest ? 'h-full flex flex-col' : ''}`}>
+        <div className={`${isGuest ? 'flex justify-between items-center p-6 bg-gray-50 border-b' : 'flex justify-between items-center mb-4'}`}>
+          <h2 className={`${isGuest ? 'text-4xl' : 'text-2xl'} font-bold`}>Patient Status Board</h2>
+          {!isGuest && !propPatients && (
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              onClick={handleRefresh}
+            >
+              Refresh
+            </button>
+          )}
+        </div>
+        {lastUpdated && !isGuest && (
+          <div className="mb-2 text-sm text-gray-500">Latest updated at {lastUpdated}</div>
         )}
+        <div
+          className={`${isGuest ? 'flex-1 overflow-hidden p-6' : 'overflow-x-auto max-h-80'}`}
+          ref={isGuest ? scrollRef : undefined}
+          style={isGuest ? { maxHeight: '100%', height: '100%' } : {}}
+        >
+          <table className={`${isGuest ? 'w-full text-lg' : 'min-w-full'} border`}>
+            <thead>
+              <tr className="bg-gray-100">
+                <th className={`${isGuest ? 'px-6 py-4' : 'px-4 py-2'} text-left`}>Patient #</th>
+                <th className={`${isGuest ? 'px-6 py-4' : 'px-4 py-2'} text-left`}>Name</th>
+                <th className={`${isGuest ? 'px-6 py-4' : 'px-4 py-2'} text-left`}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visiblePatients.map((patient) => (
+                <tr key={patient.id} className="border-b">
+                  <td className={`${isGuest ? 'px-6 py-4' : 'px-4 py-2'} font-mono`}>{patient.number}</td>
+                  <td className={`${isGuest ? 'px-6 py-4' : 'px-4 py-2'}`}>{patient.name}</td>
+                  <td className={`${isGuest ? 'px-6 py-4' : 'px-4 py-2'} flex items-center gap-2`}>
+                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[patient.status] || 'bg-gray-100'}`}>
+                      {patient.status}
+                    </span>
+                    {/* Only show update for non-guests */}
+                    {!isGuest && (
+                      <UpdateStatusDropdown patient={patient} refreshBoard={handleRefresh} />
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {patients.length > VISIBLE_ROWS && !isGuest && (
+            <div className="text-xs text-gray-400 mt-2">Showing {startIdx + 1} - {Math.min(startIdx + VISIBLE_ROWS, patients.length)} of {patients.length} patients</div>
+          )}
+        </div>
       </div>
     </div>
   );

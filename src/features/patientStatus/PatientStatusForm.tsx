@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export type PatientStatus = 'Waiting' | 'In Surgery' | 'Recovery' | 'Dismissed';
+export type PatientStatus = "Checked In"|"Pre-Procedure"|"In-progress"|"Closing"|"Recovery"|"Complete"|"Dismissal";
 
 export interface Patient {
   id: string;
@@ -13,14 +13,15 @@ interface PatientStatusFormProps {
   onSubmit: (patient: Patient) => void;
   existingPatient?: Patient;
   onNumberChange?: (num: number) => void;
+  addError?: string;
 }
 
-const statusOptions: PatientStatus[] = ['Waiting', 'In Surgery', 'Recovery', 'Dismissed'];
+const statusOptions: PatientStatus[] = ["Checked In","Pre-Procedure","In-progress","Closing","Recovery","Complete","Dismissal"];
 
-const PatientStatusForm: React.FC<PatientStatusFormProps> = ({ onSubmit, existingPatient, onNumberChange }) => {
+const PatientStatusForm: React.FC<PatientStatusFormProps> = ({ onSubmit, existingPatient, onNumberChange, addError }) => {
   const [number, setNumber] = useState(existingPatient?.number || 0);
   const [name, setName] = useState(existingPatient?.name || '');
-  const [status, setStatus] = useState<PatientStatus>(existingPatient?.status || 'Waiting');
+  const [status, setStatus] = useState<PatientStatus>(existingPatient?.status || 'Checked In');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +32,7 @@ const PatientStatusForm: React.FC<PatientStatusFormProps> = ({ onSubmit, existin
     onSubmit({ id, number, name: patientName, status });
     setNumber(0);
     setName('');
-    setStatus('Waiting');
+    setStatus('Checked In');
   };
 
   const handleNumberInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,32 +56,38 @@ const PatientStatusForm: React.FC<PatientStatusFormProps> = ({ onSubmit, existin
           required
         />
       </div>
-      <div className="mb-3">
-        <label className="block mb-1">Patient Name</label>
-        <input
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          className="w-full px-3 py-2 border rounded"
-          disabled={!!existingPatient}
-          required={!existingPatient}
-        />
-      </div>
-      <div className="mb-3">
-        <label className="block mb-1">Status</label>
-        <select
-          value={status}
-          onChange={e => setStatus(e.target.value as PatientStatus)}
-          className="w-full px-3 py-2 border rounded"
-        >
-          {statusOptions.map(opt => (
-            <option key={opt} value={opt}>{opt}</option>
-          ))}
-        </select>
-      </div>
-      <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
-        {existingPatient ? 'Update' : 'Add'}
-      </button>
+      {addError ? (
+        <div className="mb-3 text-red-600 font-semibold">{addError}</div>
+      ) : (
+        <>
+          <div className="mb-3">
+            <label className="block mb-1">Patient Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              className="w-full px-3 py-2 border rounded"
+              disabled={!!existingPatient}
+              required={!existingPatient}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="block mb-1">Status</label>
+            <select
+              value={status}
+              onChange={e => setStatus(e.target.value as PatientStatus)}
+              className="w-full px-3 py-2 border rounded"
+            >
+              {statusOptions.map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+            {existingPatient ? 'Update' : 'Add'}
+          </button>
+        </>
+      )}
     </form>
   );
 };

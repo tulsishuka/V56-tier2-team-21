@@ -10,11 +10,16 @@ const STORAGE_KEY = 'patientStatusBoardData';
 
 const PatientStatusPage: React.FC = () => {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
-  const [numberInput, setNumberInput] = useState('');
-  const [nameInput, setNameInput] = useState('');
+  // Add form state (independent)
+  const [addNumber, setAddNumber] = useState('');
+  const [addName, setAddName] = useState('');
+  const [addError, setAddError] = useState('');
+  // Search form state (independent)
+  const [searchNumber, setSearchNumber] = useState('');
+  const [searchName, setSearchName] = useState('');
   const [searchResults, setSearchResults] = useState<Patient[] | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
   const navigate = useNavigate();
 
   // Get patients from localStorage
@@ -30,45 +35,32 @@ const PatientStatusPage: React.FC = () => {
     return [];
   };
 
-  // Add or update patient
+  // Add patient only (no update)
   const handlePatientSubmit = (patient: Patient) => {
     let patients = getPatients();
-    // Check by patient number
-    const idx = patients.findIndex(p => p.number === patient.number);
-    if (idx > -1) {
-      // Update existing patient
-      patients[idx] = { ...patients[idx], ...patient };
-    } else {
-      patients.push(patient);
+    // Only add if patient number does not exist
+    const exists = patients.some(p => p.number === patient.number);
+    if (exists) {
+      setAddError('Patient number already in use');
+      return;
     }
+    patients.push(patient);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
-    setEditingPatient(null);
-    setNumberInput(null);
-    setModalOpen(false);
+    setAddNumber('');
+    setAddName('');
+    setAddError('');
   };
 
-  // When number input changes, check if patient exists and prefill
-  const handleNumberChange = (num: number | string) => {
-    setNumberInput(num.toString());
-    const patients = getPatients();
-    const found = patients.find(p => p.number === Number(num));
-    if (found) {
-      setEditingPatient(found);
-    } else {
-      setEditingPatient(null);
-    }
-  };
-
-  // Search by number or name
+  // Search by number or name (independent state)
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const patients = getPatients();
     let results = patients;
-    if (numberInput.trim() !== '') {
-      results = results.filter(p => p.number === Number(numberInput));
+    if (searchNumber.trim() !== '') {
+      results = results.filter(p => p.number === Number(searchNumber));
     }
-    if (nameInput.trim() !== '') {
-      results = results.filter(p => p.name.toLowerCase().includes(nameInput.toLowerCase()));
+    if (searchName.trim() !== '') {
+      results = results.filter(p => p.name.toLowerCase().includes(searchName.toLowerCase()));
     }
     setSearchResults(results.length > 0 ? results : []);
   };
@@ -79,7 +71,17 @@ const PatientStatusPage: React.FC = () => {
     setModalOpen(true);
   };
 
-  // Optionally, allow editing from board (not required for MVP)
+  // Update patient from modal
+  const handleUpdatePatient = (updatedPatient: Patient) => {
+    let patients = getPatients();
+    const idx = patients.findIndex(p => p.id === updatedPatient.id);
+    if (idx > -1) {
+      patients[idx] = { ...patients[idx], ...updatedPatient };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
+    }
+    setEditingPatient(null);
+    setModalOpen(false);
+  };
 
   return (
     <div>
@@ -98,15 +100,22 @@ const PatientStatusPage: React.FC = () => {
               </button>
               <PatientStatusForm
                 onSubmit={handlePatientSubmit}
-                existingPatient={numberInput !== '' ? getPatients().find(p => p.number === Number(numberInput)) : undefined}
-                onNumberChange={handleNumberChange}
+                existingPatient={undefined}
+                onNumberChange={num => {
+                  setAddNumber(num.toString());
+                  // Check for duplicate in real-time
+                  const patients = getPatients();
+                  const exists = patients.some(p => p.number === num);
+                  setAddError(exists ? 'Patient number already in use' : '');
+                }}
+                addError={addError}
               />
               <PatientStatusBoard isGuest={false} />
               {editingPatient && (
                 <PatientStatusModal
                   open={modalOpen}
                   onClose={() => { setModalOpen(false); setEditingPatient(null); }}
-                  onSubmit={handlePatientSubmit}
+                  onSubmit={handleUpdatePatient}
                   existingPatient={editingPatient}
                 />
               )}
@@ -119,8 +128,8 @@ const PatientStatusPage: React.FC = () => {
                   <label className="block mb-1">Patient Number</label>
                   <input
                     type="number"
-                    value={numberInput}
-                    onChange={e => setNumberInput(e.target.value)}
+                    value={searchNumber}
+                    onChange={e => setSearchNumber(e.target.value)}
                     className="w-full px-3 py-2 border rounded"
                     placeholder="Enter patient number"
                   />
@@ -129,8 +138,8 @@ const PatientStatusPage: React.FC = () => {
                   <label className="block mb-1">Patient Name</label>
                   <input
                     type="text"
-                    value={nameInput}
-                    onChange={e => setNameInput(e.target.value)}
+                    value={searchName}
+                    onChange={e => setSearchName(e.target.value)}
                     className="w-full px-3 py-2 border rounded"
                     placeholder="Enter patient name"
                   />
