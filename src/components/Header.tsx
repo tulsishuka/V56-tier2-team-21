@@ -16,7 +16,7 @@ const Header = () => {
 
   return (
    
-    <div className="fixed top-0 w-full bg-gradient-to-b from-[#0a1e4d] to-[#1e0a8a] text-white py-3 px-4 shadow-inner flex items-center justify-between">
+    <div className="  w-full bg-gradient-to-b from-[#0a1e4d] to-[#1e0a8a] text-white py-3 px-4 shadow-inner flex items-center justify-between">
       <div className="flex">
         <img src="/surgery-logo.png" className="w-7" />
         <h1 className="text-2xl font-bold  ml-2">Surgery Status Board</h1>
