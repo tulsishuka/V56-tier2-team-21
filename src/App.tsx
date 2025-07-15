@@ -1,6 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import Footer from './components/Footer'
-import Header from './components/Header'
 import Container from './features/container/Container'
 import Login from './features/login/Login'
 
@@ -8,7 +7,6 @@ function App() {
 
   return (
     <Router>
-      <Header />
       <Routes>
         <Route path="/" element={<Container />} />
         <Route path="/login" element={<Login />} />
