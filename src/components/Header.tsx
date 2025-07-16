@@ -1,24 +1,28 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 
+import { useState, useEffect } from "react";
 const Header = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const currentPath = location.pathname;
+  const [currentDate, setCurrentDate] = useState<string>("");
+
+ useEffect(() => {
+    const today = new Date();
+    const dateString = today.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    setCurrentDate(dateString);
+  }, []);
+
 
   return (
-    <div className="relative flex items-center justify-center mt-10 h-16">
-      {/* Home icon on the left */}
-      {currentPath !== "/" &&
-        <div className="absolute left-0 flex items-center justify-center gap-2 cursor-pointer font-bold" onClick={() => navigate('/')}>
-          <img src="/home.png" className=" size-12 ml-4" />
-          <span>HOME</span>
-        </div>}
-
-      <div className="flex items-center gap-4">
-        <div className="font-bold text-2xl">Staff Login (Admin / Surgical Team)</div>
-      </div>
+    <div className='flex items-center justify-center mt-5 gap-10'>
+      <img src='/surgery-logo.png' className='' />
+      <div className='font-bold text-4xl'>Surgery Status Boargitd</div>
     </div>
-  )
-}
+    // </header>
+   
+  );
+};
 
-export default Header
+   export default Header
