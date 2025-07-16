@@ -1,18 +1,7 @@
-import { useNavigate, useLocation } from 'react-router-dom';
 
-import { useState, useEffect } from "react";
 const Header = () => {
-  const [currentDate, setCurrentDate] = useState<string>("");
 
- useEffect(() => {
-    const today = new Date();
-    const dateString = today.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-    setCurrentDate(dateString);
-  }, []);
+ 
 
 
   return (
