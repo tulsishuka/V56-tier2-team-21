@@ -9,7 +9,7 @@ const Header = () => {
       <img src='/surgery-logo.png' className='' />
       <div className='font-bold text-4xl'>Surgery Status Boargitd</div>
     </div>
-    // </header>
+   
    
   );
 };

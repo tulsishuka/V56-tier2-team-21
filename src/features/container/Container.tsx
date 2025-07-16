@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 const Container = () => {
-  const navigate = useNavigate();
   return (
 
   <div className="flex  flex-col md:flex-row items-center justify-around p-8 bg-gradient-to-b from-[#0a1e4d] to-[#1e0a8a] text-white min-h-screen">
