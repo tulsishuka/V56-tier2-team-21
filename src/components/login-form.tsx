@@ -69,7 +69,11 @@ export function LoginForm({ className, onLogin, ...props }: LoginFormProps) {
                 Login
               </Button>
               {error && <div className="text-red-500">{error}</div>} {/* 5. Show error */}
-              <span className='text-sm'>Note: Hard-coded the login credentials: user@example.com / password</span>
+              <div className='text-sm'>
+                <div className='mb-5'>Hard-coded login credentials:</div>
+                <span className='font-bold'>Admin:</span> user@example.com / password <br />
+                <span className='font-bold'>Surgery Team</span>: surgery / team
+              </div>
             </div>
           </form>
           <div className="bg-muted relative hidden md:block">
