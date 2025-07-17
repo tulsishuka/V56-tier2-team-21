@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     // Accept user@example.com as the email
-    if (email === "user@example.com" && password === "password") {
+    if ((email === "user@example.com" && password === "password") || (email === "surgery" && password === "team")) {
       setUser(email);
       localStorage.setItem("user", email);
       return true;

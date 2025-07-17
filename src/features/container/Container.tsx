@@ -8,7 +8,7 @@ const Container = () => {
       <div className="md:w-1/2 mb-20 mb:mb-0 text-center md:text-left">
         <div className="space-x-6 font-bold hidden md:flex mb-10 ">
           {/* displays a screen showing the status of all surgical patients */}
-          <div className="hover:text-blue-300 transition cursor-pointer">Patient Status</div>
+          <div className="hover:text-blue-300 transition cursor-pointer" onClick={() => navigate('/status')}>Patient Status</div>
 
           {/* allows an administrator to add new patient data and start the workflow */}
           <div className="hover:text-blue-300 transition cursor-pointer " onClick={() => navigate('/login')}>Patient Information</div>
@@ -22,7 +22,7 @@ const Container = () => {
           <p className="pt-10 text-white text-xl italic">Our Surgery Status Board helps hospitals keep family members informed during a patient’s surgery. See real-time updates on your loved one’s progress without needing to ask staff.
           </p>
           <div className='flex gap-20'>
-            <div className='flex flex-col items-center justify-between w-32 h-32 rounded-2xl cursor-pointer hover:shadow-lg transition hover:text-blue-300 bg-white'>
+            <div className='flex flex-col items-center justify-between w-32 h-32 rounded-2xl cursor-pointer hover:shadow-lg transition hover:text-blue-300 bg-white' onClick={() => navigate('/status')}>
               <img src='/guest.png' className='object-cover p-2 mb-2' />
               <span className='text-sm font-bold'>Guest</span>
             </div>
@@ -47,7 +47,7 @@ const Container = () => {
 "/>
       </div>
     </div>
-  )
+  );
 }
 
-export default Container
+export default Container;

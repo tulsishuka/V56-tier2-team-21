@@ -8,12 +8,13 @@ import { Label } from './ui/label'
 import { useAuth } from "../features/auth/AuthContext"; // <-- Import your auth context
 import { useNavigate } from "react-router-dom";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+interface LoginFormProps extends React.ComponentProps<'div'> {
+  onLogin?: () => void;
+}
+
+export function LoginForm({ className, onLogin, ...props }: LoginFormProps) {
   // 1. Add state for email, password, and error
-  const [email, setEmail] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { login } = useAuth(); // 2. Use the login function from context
@@ -22,11 +23,16 @@ export function LoginForm({
   // 3. Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await login(email, password);
+    const success = await login(userName, password);
     if (success) {
       navigate("/admin"); // or your desired route
     } else {
       setError("Invalid credentials");
+    }
+    if (userName === 'surgery' && password === 'team') {
+      navigate("/surgery-team");
+    } else {
+      setError('Invalid credentials');
     }
   };
 
@@ -38,14 +44,13 @@ export function LoginForm({
           <form className="p-4 md:p-8" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">User Name</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
+                  id="userName"
+                  type="input"
                   required
-                  value={email}
-                  onChange={e => setEmail(e.target.value)} // 4. Make input controlled
+                  value={userName}
+                  onChange={e => setUserName(e.target.value)} // 4. Make input controlled
                 />
               </div>
               <div className="grid gap-3">

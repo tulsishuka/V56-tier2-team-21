@@ -1,8 +1,12 @@
 import { LoginForm } from '../../components/login-form'
 
-const Login = () => {
+interface LoginFormProps {
+  onLogin?: () => void;
+}
+
+const Login = (onLogin: LoginFormProps) => {
   return (
-    <LoginForm className='px-40 py-10' />
+    <LoginForm className='px-40 py-10' onLogin={() => onLogin} />
   )
 }
 
