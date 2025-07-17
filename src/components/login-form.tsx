@@ -64,6 +64,7 @@ export function LoginForm({
                 Login
               </Button>
               {error && <div className="text-red-500">{error}</div>} {/* 5. Show error */}
+              <span className='text-sm'>Note: Hard-coded the login credentials: user@example.com / password</span>
             </div>
           </form>
           <div className="bg-muted relative hidden md:block">
