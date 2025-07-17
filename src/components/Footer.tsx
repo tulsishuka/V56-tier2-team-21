@@ -11,9 +11,8 @@ const Footer = () => {
       <div>
         <a href='https://github.com/chingu-voyages/V56-tier2-team-21' target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
-      <div>2025</div>
     </div>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

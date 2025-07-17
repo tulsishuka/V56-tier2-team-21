@@ -15,7 +15,6 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route />
           <Route path="/" element={<Container />} />
           <Route path="/login" element={<Login />} />
           <Route
@@ -40,7 +39,7 @@ function App() {
         <Footer />
       </Router>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
