@@ -1,6 +1,7 @@
 // ...existing code...
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '../../components/Header';
+import { useLocation } from 'react-router-dom';
 
 // Local storage key
 const STORAGE_KEY = 'patientStatusBoardData';
@@ -59,6 +60,8 @@ function UpdateStatusDropdown({ patient, refreshBoard }: { patient: Patient; ref
   const [showDropdown, setShowDropdown] = useState(false);
   const [selected, setSelected] = useState<PatientStatus>(patient.status);
   const handleUpdate = () => setShowDropdown(true);
+
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value as PatientStatus;
     setSelected(newStatus);
@@ -100,6 +103,8 @@ const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest, patien
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
+  const location = useLocation();
+  const currentPath = location.pathname.replace('/', '');
   // Load from localStorage on mount (only if not using propPatients)
   useEffect(() => {
     if (!propPatients) {
@@ -163,6 +168,7 @@ const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest, patien
 
   return (
     <div className={`${isGuest ? 'fixed inset-0 bg-white' : 'max-w-2xl mx-auto mt-8 p-4 bg-white rounded-xl shadow-md mb-24'}`}>
+      {currentPath !== 'surgery-team' && <div className='mb-10'><Header /></div>}
       <div className={`${isGuest ? 'h-full flex flex-col' : ''}`}>
         <div>
           {!isGuest && !propPatients && (
@@ -174,7 +180,7 @@ const PatientStatusBoard: React.FC<PatientStatusBoardProps> = ({ isGuest, patien
             </button>
           )}
         </div>
-        <div className="mb-2 text-sm text-gray-500">Latest updated at {lastUpdated}</div>
+        <div className="mb-2 text-sm text-gray-500 px-5">Latest updated at {lastUpdated}</div>
         <div
           className={`${isGuest ? 'flex-1 overflow-hidden p-6' : 'overflow-x-auto max-h-80'}`}
           ref={isGuest ? scrollRef : undefined}
