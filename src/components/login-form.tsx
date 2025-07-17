@@ -1,9 +1,9 @@
-import { Label } from '@radix-ui/react-label'
 import { Card, CardContent } from './ui/card'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { cn } from '../lib/utils'
 import Header from './Header'
+import { Label } from './ui/label'
 
 export function LoginForm({
   className,
