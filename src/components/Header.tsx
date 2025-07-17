@@ -1,38 +1,42 @@
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getCurrentDate } from '../lib/utils';
 
-  import { useState, useEffect } from "react";
+const Header = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname.replace('/', '');
 
-export default function Header() {
-    const [currentDate, setCurrentDate] = useState("");
-
-     useEffect(() => {
-    const today = new Date();
-    const dateString = today.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-    setCurrentDate(dateString);
-  }, []);
+  const getTitle = () => {
+    switch (currentPath) {
+      case 'login':
+        return 'Staff Login (Admin / Surgical Team)';
+      case 'status':
+        return 'Patient Status';
+      case 'admin':
+        return 'Patient Information';
+      case 'surgery':
+        return 'Patient Status Update';
+      default:
+        return '';
+    }
+  };
 
   return (
-    <header className="bg-[#0a1e4d] text-white shadow-md px-6 py-4 flex justify-between items-center">
-      {/* Logo / App Name */}
-      <div className="text-2xl font-bold tracking-wide">
-        🏥 Surgery Status Board
-      </div>
-
-      {/* Navigation */}
-      <nav className="space-x-6 text-sm font-medium hidden md:flex">
-        <a href="#" className="hover:text-blue-300 transition">Home</a>
-        <a href="#" className="hover:text-blue-300 transition">Patient Info</a>
-        <a href="#" className="hover:text-blue-300 transition">Surgical Team</a>
-        <a href="#" className="hover:text-blue-300 transition">Admin Panel</a>
-      </nav>
-
-      {/* Mobile Menu Placeholder (optional) */}
-      <div className="">
-       📅 {currentDate}
-      </div>
-    </header>
+    <div className="flex items-center justify-between mt-10 h-16">
+      {/* Home icon on the left */}
+      {currentPath !== '' &&
+        <div
+          className="flex items-center justify-center gap-2 cursor-pointer font-bold"
+          onClick={() => navigate('/')}
+        >
+          <img src="/home.png" className="size-12 ml-4" />
+          <span>HOME</span>
+        </div>
+      }
+      <div className="font-bold text-2xl">{getTitle()}</div>
+      <div>{getCurrentDate()}</div>
+    </div>
   );
-}
+};
+
+export default Header;
