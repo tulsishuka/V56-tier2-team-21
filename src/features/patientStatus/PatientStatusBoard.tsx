@@ -7,7 +7,7 @@ const STORAGE_KEY = 'patientStatusBoardData';
 export type PatientStatus = "Checked In"|"Pre-Procedure"|"In-progress"|"Closing"|"Recovery"|"Complete"|"Dismissal";
 export interface Patient {
   id: string;
-  number: number;
+  number: string;
   name: string;
   status: PatientStatus;
 }

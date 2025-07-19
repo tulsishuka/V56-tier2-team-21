@@ -4,7 +4,7 @@ export type PatientStatus = "Checked In"|"Pre-Procedure"|"In-progress"|"Closing"
 
 export interface Patient {
   id: string;
-  number: number;
+  number: string;
   name: string;
   status: PatientStatus;
 }
@@ -19,43 +19,43 @@ interface PatientStatusFormProps {
 const statusOptions: PatientStatus[] = ["Checked In","Pre-Procedure","In-progress","Closing","Recovery","Complete","Dismissal"];
 
 const PatientStatusForm: React.FC<PatientStatusFormProps> = ({ onSubmit, existingPatient, onNumberChange, addError }) => {
-  const [number, setNumber] = useState(existingPatient?.number || 0);
+  // Only use number state for editing
   const [name, setName] = useState(existingPatient?.name || '');
   const [status, setStatus] = useState<PatientStatus>(existingPatient?.status || 'Checked In');
 
+  // Helper to generate the next patient number as a string of digits
+  function generateNextPatientNumber(existingNumbers: Set<string>): string {
+    // Convert all to numbers, ignore non-numeric
+    const nums = Array.from(existingNumbers)
+      .map(n => parseInt(n, 10))
+      .filter(n => !isNaN(n));
+    const max = nums.length > 0 ? Math.max(...nums) : 0;
+    return (max + 1).toString();
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // For new patients, require name. For existing, use existing name if field is disabled.
     const patientName = existingPatient ? existingPatient.name : name;
-    if (!number || !patientName) return;
+    if (!patientName) return;
+    let number: string;
+    if (existingPatient) {
+      number = existingPatient.number;
+    } else {
+      // Get all existing patient numbers from localStorage
+      const data = localStorage.getItem('patientStatusBoardData');
+      const patients = data ? JSON.parse(data) : [];
+      const existingNumbers = new Set<string>(patients.map((p: any) => p.number));
+      number = generateNextPatientNumber(existingNumbers);
+    }
     const id = existingPatient?.id || Math.random().toString(36).substr(2, 6).toUpperCase();
     onSubmit({ id, number, name: patientName, status });
-    setNumber(0);
     setName('');
     setStatus('Checked In');
-  };
-
-  const handleNumberInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const num = Number(e.target.value);
-    setNumber(num);
-    if (typeof onNumberChange === 'function') {
-      onNumberChange(num);
-    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-4 p-4 bg-white rounded-xl shadow">
       <h2 className="text-lg font-bold mb-4">{existingPatient ? 'Update' : 'Add'} Patient Status</h2>
-      <div className="mb-3">
-        <label className="block mb-1">Patient Number</label>
-        <input
-          type="number"
-          value={number}
-          onChange={handleNumberInput}
-          className="w-full px-3 py-2 border rounded"
-          required
-        />
-      </div>
       {addError ? (
         <div className="mb-3 text-red-600 font-semibold">{addError}</div>
       ) : (
