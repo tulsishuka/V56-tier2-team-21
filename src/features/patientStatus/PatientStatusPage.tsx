@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import PatientStatusForm from './PatientStatusForm';
 import PatientStatusModal from './PatientStatusModal';
-import type { Patient } from './PatientStatusForm';
+import type { Patient } from './PatientStatusBoard';
 import PatientStatusBoard from './PatientStatusBoard';
 import Header from '../../components/Header';
 
 const STORAGE_KEY = 'patientStatusBoardData';
 
 const PatientStatusPage: React.FC = () => {
-  const [addNumber, setAddNumber] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
+  // Add form state (independent)
   const [addName, setAddName] = useState('');
   const [addError, setAddError] = useState('');
   // Search form state (independent)
-  const [searchNumber, setSearchNumber] = useState('');
-  const [searchName, setSearchName] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Patient[] | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
@@ -34,15 +34,8 @@ const PatientStatusPage: React.FC = () => {
   // Add patient only (no update)
   const handlePatientSubmit = (patient: Patient) => {
     let patients = getPatients();
-    // Only add if patient number does not exist
-    const exists = patients.some(p => p.number === patient.number);
-    if (exists) {
-      setAddError('Patient number already in use');
-      return;
-    }
     patients.push(patient);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
-    setAddNumber('');
     setAddName('');
     setAddError('');
   };
@@ -51,13 +44,11 @@ const PatientStatusPage: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const patients = getPatients();
-    let results = patients;
-    if (searchNumber.trim() !== '') {
-      results = results.filter(p => p.number === Number(searchNumber));
-    }
-    if (searchName.trim() !== '') {
-      results = results.filter(p => p.name.toLowerCase().includes(searchName.toLowerCase()));
-    }
+    const query = searchQuery.trim().toLowerCase();
+    let results = patients.filter(p =>
+      p.number === query ||
+      p.name.toLowerCase().includes(query)
+    );
     setSearchResults(results.length > 0 ? results : []);
   };
 
@@ -80,20 +71,24 @@ const PatientStatusPage: React.FC = () => {
   };
 
   return (
-    <>
-      <div className='px-10'><Header /></div>
-      <div className="flex items-center justify-center">
-        <div>
-          <form onSubmit={handleSearch} className="p-4 bg-white rounded-xl shadow mb-4">
-            <h2 className="text-lg font-bold mb-4">Search Patient</h2>
-            <div className="mb-3">
-              <label className="block mb-1">Patient Number</label>
-              <input
-                type="number"
-                value={searchNumber}
-                onChange={e => setSearchNumber(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
-                placeholder="Enter patient number"
+    <div>
+      {!loggedIn ? (
+        <LoginForm onLogin={() => setLoggedIn(true)} />
+      ) : (
+        <>
+          <div className="flex items-start gap-8 max-w-5xl mx-auto mt-8 mb-2">
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold mb-2">Welcome Surgery Team</h1>
+              <button
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition mb-4"
+                onClick={() => navigate('/')}
+              >
+                Home
+              </button>
+              <PatientStatusForm
+                onSubmit={handlePatientSubmit}
+                existingPatient={undefined}
+                addError={addError}
               />
             </div>
             <div className="mb-3">
@@ -143,10 +138,38 @@ const PatientStatusPage: React.FC = () => {
                 <PatientStatusBoard isGuest={false} patients={searchResults} />
               )}
             </div>
-          )}
-        </div>
-      </div>
-    </>
+            {/* Search Bar and Results */}
+            <div className="w-80">
+              <form onSubmit={handleSearch} className="p-4 bg-white rounded-xl shadow mb-4">
+                <h2 className="text-lg font-bold mb-4">Search Patient</h2>
+                <div className="mb-3">
+                  <label className="block mb-1">Search by Patient Number or Name</label>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className="w-full px-3 py-2 border rounded"
+                    placeholder="Enter patient number or name"
+                  />
+                </div>
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Search</button>
+              </form>
+              {/* Search Results */}
+              {searchResults && (
+                <div className="bg-white rounded-xl shadow p-4">
+                  <h3 className="text-md font-semibold mb-2">Search Results</h3>
+                  {searchResults.length === 0 ? (
+                    <div className="text-red-500">Result not found</div>
+                  ) : (
+                    <PatientStatusBoard isGuest={false} patients={searchResults} />
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 
