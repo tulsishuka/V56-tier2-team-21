@@ -4,11 +4,17 @@ import PatientStatusModal from './PatientStatusModal';
 import type { Patient } from './PatientStatusBoard';
 import PatientStatusBoard from './PatientStatusBoard';
 import Header from '../../components/Header';
+import { LoginForm } from '../../components/login-form';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../features/auth/AuthContext";
 
 const STORAGE_KEY = 'patientStatusBoardData';
 
 const PatientStatusPage: React.FC = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  // Remove local loggedIn state
+  // const [loggedIn, setLoggedIn] = useState(false);
+  const { isSurgeryTeam } = useAuth();
+  console.log('isSurgeryTeam in PatientStatusPage', isSurgeryTeam);
   // Add form state (independent)
   const [addName, setAddName] = useState('');
   const [addError, setAddError] = useState('');
@@ -17,6 +23,7 @@ const PatientStatusPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<Patient[] | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
+  const navigate = useNavigate();
 
   // Get patients from localStorage
   const getPatients = (): Patient[] => {
@@ -72,8 +79,8 @@ const PatientStatusPage: React.FC = () => {
 
   return (
     <div>
-      {!loggedIn ? (
-        <LoginForm onLogin={() => setLoggedIn(true)} />
+      {!isSurgeryTeam ? (
+        <LoginForm />
       ) : (
         <>
           <div className="flex items-start gap-8 max-w-5xl mx-auto mt-8 mb-2">
@@ -91,54 +98,6 @@ const PatientStatusPage: React.FC = () => {
                 addError={addError}
               />
             </div>
-            <div className="mb-3">
-              <label className="block mb-1">Patient Name</label>
-              <input
-                type="text"
-                value={searchName}
-                onChange={e => setSearchName(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
-                placeholder="Enter patient name"
-              />
-            </div>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Search</button>
-          </form>
-          <PatientStatusForm
-            onSubmit={handlePatientSubmit}
-            existingPatient={undefined}
-            onNumberChange={num => {
-              setAddNumber(num.toString());
-              // Check for duplicate in real-time
-              const patients = getPatients();
-              const exists = patients.some(p => p.number === num);
-              setAddError(exists ? 'Patient number already in use' : '');
-            }}
-            addError={addError}
-          />
-          <PatientStatusBoard isGuest={false} />
-          {editingPatient && (
-            <PatientStatusModal
-              open={modalOpen}
-              onClose={() => { setModalOpen(false); setEditingPatient(null); }}
-              onSubmit={handleUpdatePatient}
-              existingPatient={editingPatient}
-            />
-          )}
-        </div>
-        {/* Search Bar and Results */}
-        <div className="w-80">
-
-          {/* Search Results */}
-          {searchResults && (
-            <div className="bg-white rounded-xl shadow p-4">
-              <h3 className="text-md font-semibold mb-2">Search Results</h3>
-              {searchResults.length === 0 ? (
-                <div className="text-red-500">Result not found</div>
-              ) : (
-                <PatientStatusBoard isGuest={false} patients={searchResults} />
-              )}
-            </div>
-            {/* Search Bar and Results */}
             <div className="w-80">
               <form onSubmit={handleSearch} className="p-4 bg-white rounded-xl shadow mb-4">
                 <h2 className="text-lg font-bold mb-4">Search Patient</h2>
@@ -167,6 +126,17 @@ const PatientStatusPage: React.FC = () => {
               )}
             </div>
           </div>
+          {/* Main Patient Board */}
+          <PatientStatusBoard isGuest={false} />
+          {/* Edit Modal */}
+          {editingPatient && (
+            <PatientStatusModal
+              open={modalOpen}
+              onClose={() => { setModalOpen(false); setEditingPatient(null); }}
+              onSubmit={handleUpdatePatient}
+              existingPatient={editingPatient}
+            />
+          )}
         </>
       )}
     </div>

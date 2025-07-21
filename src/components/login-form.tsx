@@ -17,22 +17,23 @@ export function LoginForm({ className, onLogin, ...props }: LoginFormProps) {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth(); // 2. Use the login function from context
+  const { login, loginSurgeryTeam } = useAuth(); // 2. Use the login function from context
   const navigate = useNavigate();
 
   // 3. Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (userName === 'surgery' && password === 'team') {
+      loginSurgeryTeam();
+      navigate("/surgery-team"); // Always navigate, even if already there
+      if (onLogin) onLogin();
+      return;
+    }
     const success = await login(userName, password);
     if (success) {
-      navigate("/admin"); // or your desired route
+      navigate("/admin");
     } else {
       setError("Invalid credentials");
-    }
-    if (userName === 'surgery' && password === 'team') {
-      navigate("/surgery-team");
-    } else {
-      setError('Invalid credentials');
     }
   };
 
