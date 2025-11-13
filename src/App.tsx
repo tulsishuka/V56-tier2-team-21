@@ -1,7 +1,6 @@
 import Footer from './components/Footer'
 import Header from './components/Header'
 import Container from './features/container/Container'
-
 function App() {
 
   return (
@@ -12,5 +11,4 @@ function App() {
     </>
   )
 }
-
 export default App
